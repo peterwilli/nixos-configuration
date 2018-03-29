@@ -14,10 +14,6 @@
   # Hardware extensions
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.enable = true;
-  fileSystems."/backup" =
-    { device = "/dev/disk/by-uuid/2a40b6c0-7216-4dde-9bfe-1aa9875aa6ea";
-      fsType = "ext4";
-    };
 
   virtualisation.docker.enable = true;
   virtualisation.virtualbox.host.enable = true;
@@ -37,30 +33,38 @@
   };
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";
+  services.ntp = {
+    enable = true;
+    servers = [ "server.local" "0.pool.ntp.org" "1.pool.ntp.org" "2.pool.ntp.org" ];
+  };
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     # Command line utils
-    xorg.xhost psmisc wget p7zip curl openssl zsh oh-my-zsh htop docker_compose pwgen
+    xorg.xhost psmisc wget p7zip curl zsh oh-my-zsh htop lm_sensors
     # Themes & GUI
-    adapta-gtk-theme mate.mate-icon-theme-faenza xfce.xfce4_battery_plugin
+    adapta-gtk-theme mate.mate-icon-theme-faenza
     # Internet shit
-    rambox firefox chromium skype
+    rambox firefox chromium
     # Dev tools
-    atom git arduino nodejs-8_x ruby
+    atom sqlitebrowser git arduino nodejs-8_x ruby jetbrains.idea-community
     # Office
     libreoffice zoom-us
     # Creativity
-    inkscape gimp
+    inkscape gimp hugin kazam shutter
     # GUI utils
-    keepass gnome3.file-roller shutter transmission_gtk evince gnome3.sushi
+    gnome3.file-roller transmission_gtk evince gnome3.sushi
     # Recreational stuff
-    steam vlc
+    steam vlc pavucontrol
     # Android
     jmtpfs
     # Spelling
     aspell aspellDicts.en aspellDicts.nl
+    # VM stuff
+    docker_compose wine
+    # Security
+    veracrypt keepass pwgen openssl
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -71,16 +75,17 @@
   services.xserver.enable = true;
   services.xserver.layout = "us";
   services.xserver.xkbOptions = "eurosign:e";
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver.videoDrivers = [ "amdgpu_nonfree" ];
   services.xserver.displayManager.lightdm.enable = true;
 
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
+  #services.xserver.desktopManager.plasma5.enable = true;
 
   # Nice graphical effects.
   services.compton = {
-    enable          = true;
+    enable          = false;
     fade            = true;
     inactiveOpacity = "0.9";
     shadow          = true;
@@ -107,7 +112,7 @@
     # Easy aliasses
     alias sshbot='ssh root@bot -C -L 10000:localhost:10000 -L 8081:localhost:8081'
     alias install_atom_packages='apm install language-vue markdown-pdf nix vue2-autocomplete'
-    alias spawn_custom='function spawn_custom(){ docker run --net=host -it -w /$(basename `pwd`) -v $(pwd):/$(basename `pwd`) -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name $1 $2 bash };spawn_custom'
+    alias spawn_custom='function spawn_custom(){ docker run --net=host -it --hostname=127.0.0.1 -w /$(basename `pwd`) -v $(pwd):/$(basename `pwd`) -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --name $1 $2 bash };spawn_custom'
     alias spawn_ubuntu='function spawn_ubuntu(){ spawn_custom $1 ubuntu:16.04 };spawn_ubuntu'
     alias pkg_search='function pkg_search(){ nix-env -qaP | grep "$1" };pkg_search'
   '';
@@ -119,10 +124,13 @@
     "51.15.57.177" = ["flashio"];
     "51.15.63.224" = ["pikachu"];
     "136.144.171.45" = ["xurux"];
+
+    # Disable tracking
+    "127.0.0.1" = ["lmlicenses.wip4.adobe.com" "lm.licenses.adobe.com"];
   };
 
   # Firewall
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 8100 ];
 
   # Dont hurt my eyes
@@ -159,7 +167,7 @@
     hashedPassword = "$6$VeKFrngY$/4jSrGKKyY6LSpkkdCyrNMhaJ37vRbUdeYAMGhMTtox1xAmmkCHg65NHAgf1K2NyEBPqYTG1nS7WPKIr7MWWv.";
   };
 
-  system.stateVersion = "17.09";
+  system.stateVersion = "nixos-17.09";
   nix.gc = {
     automatic = true;
   };
