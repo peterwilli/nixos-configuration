@@ -50,11 +50,11 @@
     # Dev tools
     atom sqlitebrowser git arduino nodejs-8_x ruby jetbrains.idea-community
     # Office
-    libreoffice zoom-us
+    libreoffice zoom-us python36Packages.grip
     # Creativity
-    inkscape gimp hugin kazam shutter
+    inkscape gimp hugin kazam shutter blender audacity
     # GUI utils
-    gnome3.file-roller transmission_gtk evince gnome3.sushi
+    gnome3.file-roller transmission_gtk evince
     # Recreational stuff
     steam vlc pavucontrol
     # Android
@@ -62,7 +62,7 @@
     # Spelling
     aspell aspellDicts.en aspellDicts.nl
     # VM stuff
-    docker_compose wine
+    docker_compose wine virtualbox
     # Security
     veracrypt keepass pwgen openssl
   ];
@@ -167,7 +167,7 @@
     hashedPassword = "$6$VeKFrngY$/4jSrGKKyY6LSpkkdCyrNMhaJ37vRbUdeYAMGhMTtox1xAmmkCHg65NHAgf1K2NyEBPqYTG1nS7WPKIr7MWWv.";
   };
 
-  system.stateVersion = "nixos-17.09";
+  system.stateVersion = "nixos-18.03";
   nix.gc = {
     automatic = true;
   };
